@@ -13,6 +13,10 @@ app.use(express.json());
 const usersRoutes = require("./routes/users.routes")
 app.use("/api", usersRoutes)
 
+// Import Chats Routes
+const chatsRoutes = require("./routes/chats.routes")
+app.use("/api", chatsRoutes)
+
 // Test Route
 app.get("/", (req, res) => res.send("Chat API Running..."));
 
