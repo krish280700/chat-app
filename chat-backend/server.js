@@ -17,6 +17,10 @@ app.use("/api", usersRoutes)
 const chatsRoutes = require("./routes/chats.routes")
 app.use("/api", chatsRoutes)
 
+// Import Messages Routes
+const messagesRoutes = require("./routes/message.routes")
+app.use("/api", messagesRoutes)
+
 // Test Route
 app.get("/", (req, res) => res.send("Chat API Running..."));
 

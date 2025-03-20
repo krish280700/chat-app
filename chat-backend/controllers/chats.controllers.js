@@ -1,7 +1,7 @@
 const chatsService = require("../services/chats.services")
 
 class ChatsController {
-    async createChart(req, res) {
+    async createChat(req, res) {
        const {participants} = req.body
        try{
             const chat  = await chatsService.createChat(participants)

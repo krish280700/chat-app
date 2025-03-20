@@ -5,7 +5,7 @@ const ChatsController = require("../controllers/chats.controllers")
 
 // Chats Routes
 
-router.post("/chats", ChatsController.createChart)
+router.post("/chats", ChatsController.createChat)
 router.get("/chats", ChatsController.getChats)
 router.get("/chats/:id", ChatsController.getChatsById)
 router.put("/chats/:id", ChatsController.updateChat)
