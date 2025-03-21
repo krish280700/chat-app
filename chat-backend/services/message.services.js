@@ -1,9 +1,9 @@
 const MessagesSchema = require("../model/messages.model")
 
 class MessagesService {
-    async createMessage(sender, reciever, content){
+    async createMessage(sender, receiver, content, chatId){
         try{
-            return await MessagesSchema.create({sender, reciever, content})
+            return await MessagesSchema.create({sender, receiver, content, chatId})
         }catch (err){
             console.log(err)
         }
@@ -11,7 +11,8 @@ class MessagesService {
 
     async getMessagesByChatId(chatId){
         try{
-            return await MessagesSchema.find({chatId}).populate("sender", "-password").populate("reciever", "-password")
+            console.log(chatId)
+            return await MessagesSchema.find({chatId}).populate("sender", "-password").populate("receiver", "-password")
         }catch(err){
             console.log(err)
         }
@@ -19,7 +20,7 @@ class MessagesService {
 
     async getMessagesById(id){
         try{
-            return await MessagesSchema.findById(id).populate("sender", "-password").populate("reciever", "-password")
+            return await MessagesSchema.findById(id).populate("sender", "-password").populate("receiver", "-password")
         }catch (err){
             console.log(err)
         }

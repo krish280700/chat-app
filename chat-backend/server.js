@@ -18,7 +18,7 @@ const chatsRoutes = require("./routes/chats.routes")
 app.use("/api", chatsRoutes)
 
 // Import Messages Routes
-const messagesRoutes = require("./routes/message.routes")
+const messagesRoutes = require("./routes/messages.routes")
 app.use("/api", messagesRoutes)
 
 // Test Route
