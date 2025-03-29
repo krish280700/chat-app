@@ -24,6 +24,7 @@ class UsersService {
     }
 
     async getUsersById(id){
+        console.log('jksjs', id)
         try{
             return await UserSchema.findById(id).select("-password")
         }catch(err){
@@ -33,7 +34,7 @@ class UsersService {
 
     async updateUser(id, name, email){
         try{
-            await UserSchema.findByIdAndUpdate(id, {name, email})
+            return await UserSchema.findByIdAndUpdate(id, {name, email})  
         }catch(err){
             console.log(err)
         }

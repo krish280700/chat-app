@@ -1,4 +1,7 @@
 const express = require("express");
+const { ApolloServer } = require("apollo-server-express");
+const typeDefs = require("./graphql/schema/index");
+const resolvers = require("./graphql/resolvers/index");
 const cors = require("cors");
 const connectDB = require("./config/db")
 
@@ -26,5 +29,16 @@ app.get("/", (req, res) => res.send("Chat API Running..."));
 
 connectDB()
 // Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+const server = new ApolloServer({ typeDefs, resolvers });
+
+server.start().then(() => {
+  server.applyMiddleware({ app });
+
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
+  });
+});
