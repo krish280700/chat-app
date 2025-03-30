@@ -20,7 +20,7 @@ type Query{
 
 type Mutation{
     createMessage(sender: String!, receiver: String!, chatId: String!, content: String!): Message!
-    updateMessage(_id: String!, content: String): Message!
+    updateMessage(_id: String!, content: String, isRead: Boolean): Message!
     deleteMessage(_id: String!): Message!
 }
 `
