@@ -3,7 +3,7 @@ const ChatsSchema = require('../model/chats.models');
 class ChatsService {
     async createChat(participants){
         try {
-            return await ChatsSchema.create({participants})
+            return await ChatsSchema.create({participants}).populate("participants", "-password")
         }catch(err){
             console.log(err)
         }

@@ -11,7 +11,6 @@ class MessagesService {
 
     async getMessagesByChatId(chatId){
         try{
-            console.log(chatId)
             return await MessagesSchema.find({chatId}).populate("sender", "-password").populate("receiver", "-password")
         }catch(err){
             console.log(err)

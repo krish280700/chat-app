@@ -19,3 +19,5 @@ type Mutation{
     sendNotification(userId: String!, messageId: String!): Notification!
 }
 `
+
+module.exports = notificationsSchema

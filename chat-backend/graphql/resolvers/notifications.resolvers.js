@@ -1,4 +1,4 @@
-const notificationsService = require('../../services/notifications.service');
+const notificationsService = require('../../services/notification.services');
 
 const notificationResolvers = {
     Query: {

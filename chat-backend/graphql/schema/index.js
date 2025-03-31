@@ -5,9 +5,5 @@ const notificationsSchema = require('./notifications.schema.js')
 const chatsSchema = require('./chats.schema.js')
 const messagesSchema = require('./messages.schema.js')
 
-const typeDefs = mergeTypeDefs([usersSchema, notificationsSchema, chatsSchema, messagesSchema], {
-    all: true,
-});
-
-
+const typeDefs = mergeTypeDefs([usersSchema, notificationsSchema, chatsSchema, messagesSchema])
 module.exports = typeDefs;

@@ -4,7 +4,7 @@ const chatsSchema = gql`
 
 type Chat{
     _id: String
-    participants: [String!]!
+    participants: [User!]!
     lastMessage: String
     updatedAt: String
 }

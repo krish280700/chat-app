@@ -1,10 +1,9 @@
-const messageService = require('../../services/messages.service');
+const messageService = require('../../services/message.services');
 
 const messageResolvers = {
     Query: {
         getMessagesByChatId: async (_, { chatId }) => await messageService.getMessagesByChatId(chatId),
-        getMessage: async (_, { id }) => await messageService.getMessagesById(id),
-        getMessages: async () => await messageService.getMessages()
+        getMessage: async (_, { _id }) => await messageService.getMessagesById(_id),
     },
 
     Mutation: {

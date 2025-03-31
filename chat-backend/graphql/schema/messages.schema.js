@@ -4,8 +4,8 @@ const messagesSchema = gql`
 
 type Message{
     _id: String
-    sender: String!
-    receiver: String!
+    sender: User!
+    receiver: User!
     chatId: String!
     content: String!
     timestamp: String
@@ -13,7 +13,6 @@ type Message{
 }
 
 type Query{
-    getMessages: [Message!]!
     getMessage(_id: String!): Message
     getMessagesByChatId(chatId: String!): [Message!]!
 }
