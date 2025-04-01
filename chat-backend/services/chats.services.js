@@ -38,7 +38,7 @@ class ChatsService {
     async deleteChat(id){
         try{
             await ChatsSchema.findByIdAndDelete(id)
-            return ChatsSchema.find().populate("participants", "-password")
+            return await ChatsSchema.find().populate("participants", "-password")
         }catch(err){
             console.log(err)
         }
