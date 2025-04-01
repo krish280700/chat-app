@@ -16,7 +16,7 @@ type Query{
 type Mutation{
     createUser(name: String!, email: String!, password: String!): User!
     updateUser(_id: String!, name: String, email: String): User!
-    deleteUser(id: ID!): User!
+    deleteUser(_id: ID!): [User!]!
 }`;
 
 module.exports = usersSchema

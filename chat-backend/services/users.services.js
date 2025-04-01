@@ -43,6 +43,7 @@ class UsersService {
     async deleteUser(id){
         try{
             await UserSchema.findByIdAndDelete(id)
+            return UserSchema.find().select("-password")
         }catch(err){
             console.logb(err)
         }

@@ -8,8 +8,8 @@ const messageResolvers = {
 
     Mutation: {
         createMessage: async (_, { sender, receiver, content, chatId }) => await messageService.createMessage(sender, receiver, content, chatId),
-        updateMessage: async (_, { id, content, isRead }) => await messageService.updateMessage(id, content, isRead),
-        deleteMessage: async (_, { id }) => await messageService.deleteMessage(id)
+        updateMessage: async (_, { _id, content, isRead }) => await messageService.updateMessage(_id, content, isRead),
+        deleteMessage: async (_, { _id }) => await messageService.deleteMessage(_id)
     }
 }
 

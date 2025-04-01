@@ -3,7 +3,7 @@ const MessagesSchema = require("../model/messages.model")
 class MessagesService {
     async createMessage(sender, receiver, content, chatId){
         try{
-            return await MessagesSchema.create({sender, receiver, content, chatId})
+            return (await MessagesSchema.create({sender, receiver, content, chatId})).populate("sender", "-password").populate("receiver", "-password")
         }catch (err){
             console.log(err)
         }
