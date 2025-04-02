@@ -4,13 +4,43 @@ const typeDefs = require("./graphql/schema/index");
 const resolvers = require("./graphql/resolvers/index");
 const cors = require("cors");
 const connectDB = require("./config/db")
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
 
 require("dotenv").config();
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Chat API",
+      version: "1.0.0",
+      description: "API documentation for the Chat application",
+    },
+    servers: [
+      {
+        url: "http://localhost:4000",
+      },
+    ],
+  },
+  apis: ["./routes/*.js"],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+const swaggerUiOptions = {
+  explorer: true,
+};
+const swaggerUiSetup = swaggerUi.setup(swaggerDocs, swaggerUiOptions);
+const swaggerUiRoute = swaggerUi.serve;
+const swaggerUiPath = "/api-docs";
+
+
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.use(swaggerUiPath, swaggerUiRoute, swaggerUiSetup);
 
 // Import Users Routes
 const usersRoutes = require("./routes/users.routes")
