@@ -31,7 +31,7 @@ class MessagesService {
         try{
             const updateMsg = await MessagesSchema.findByIdAndUpdate(id, {content})
             await updateMsg.populate("sender", "-password")
-            return await updateM.populate("receiver", "-password")
+            return await updateMsg.populate("receiver", "-password")
         }catch(err){
             console.log(err)
         }
