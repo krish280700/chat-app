@@ -4,7 +4,7 @@ class MessagesService {
     async createMessage(sender, receiver, content, chatId){
         try{
             const newMessage = await MessagesSchema.create({sender, receiver, content, chatId})
-            const senderPopulatedMsg = await newMessage.populate("sender", "-password")
+            await newMessage.populate("sender", "-password")
             return await newMessage.populate("receiver", "-password")
         }catch (err){
             console.log(err)
@@ -29,11 +29,14 @@ class MessagesService {
 
     async updateMessage(id, content){
         try{
-            await MessagesSchema.findByIdAndUpdate(id, {content})
+            const updateMsg = await MessagesSchema.findByIdAndUpdate(id, {content})
+            await updateMsg.populate("sender", "-password")
+            return await updateM.populate("receiver", "-password")
         }catch(err){
             console.log(err)
         }
     }
+
 
     async deleteMessage(id){
         try{
