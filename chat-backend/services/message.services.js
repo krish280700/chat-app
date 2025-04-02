@@ -3,7 +3,9 @@ const MessagesSchema = require("../model/messages.model")
 class MessagesService {
     async createMessage(sender, receiver, content, chatId){
         try{
-            return (await MessagesSchema.create({sender, receiver, content, chatId})).populate("sender", "-password").populate("receiver", "-password")
+            const newMessage = await MessagesSchema.create({sender, receiver, content, chatId})
+            const senderPopulatedMsg = await newMessage.populate("sender", "-password")
+            return await newMessage.populate("receiver", "-password")
         }catch (err){
             console.log(err)
         }
