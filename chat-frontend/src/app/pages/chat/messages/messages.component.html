@@ -1,0 +1,20 @@
+<div class="relative h-full">
+    <div class="border-b p-5" #chatHeader>
+        <p class="m-b-0">{{currentChatPerson()}}</p>
+    </div>
+    <div class="chat-message overflow-y-auto" #chatMessage>
+        @for(message of messages(); track message._id){
+            <div class="flex w-full" [class]="message.sender._id == user()?._id ? 'justify-end' : 'justify-start'">
+                <div [class]="message.sender._id == user()?._id ? 'bg-blue-100 flex-end' : 'bg-gray-100 flex-start'"
+                    class="m-2 p-2 rounded-xl flex items-baseline shadow-sm text-gray-700 max-w-[50%] " >
+                    <p>{{message.content}}</p>
+                    <span class="ml-2 text-xs">{{message.timestamp | date:'shortTime'}}</span>
+                </div>
+            </div>
+        }
+    </div>
+    <div class=" border px-5 py-10 bg-white shadow-sm flex items-center justify-between absolute bottom-[74px] w-full" #chatInput>
+        <input type="text" placeholder="" class="w-full h-10 border rounded-xl border-gray-300 focus:outline-none focus:border-blue-500 px-2" />
+        <ng-icon name="heroArrowRightCircleSolid" class="ml-3" size="2em" color="blue"></ng-icon>
+    </div>
+</div>

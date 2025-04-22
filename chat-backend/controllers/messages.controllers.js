@@ -13,7 +13,6 @@ class MessagesController {
 
     async getMessagesByChatId(req, res){
         const {id} = req.params
-        console.log(id, 'sjmjs')
         try{
             const messages = await MessagesService.getMessagesByChatId(id)
             res.status(200).json({message: "All Messages", messages})

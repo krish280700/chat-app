@@ -1,0 +1,15 @@
+<div>
+    @for (user of users(); track user._id){
+        <div class="flex items-center justify-center h-16 -z-10  bg-white border-b-[1px] shadow-sm px-4">
+            <div class="flex items-center">
+                <ng-icon name="heroUserCircleSolid" size="2em"></ng-icon>
+            </div>
+            <div class="ml-4">
+                <p class="text-gray-700">{{ user.name }}</p>
+            </div>
+            <div class="ml-auto">
+                <ng-icon name="heroUserPlus" size="1.5em" color="blue"></ng-icon>
+            </div>
+        </div>
+    }
+</div>

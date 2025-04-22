@@ -20,6 +20,16 @@ class ChatsController {
         }
     }
 
+    async getChatsByUserId(req, res){
+        const {userId} = req.params
+        try{
+            const chats = await chatsService.getChatsByUserId(userId)
+            res.status(200).json({message: 'All Chats By User', chats})
+        }catch(err){
+            res.status(500).json(err)
+        }
+    }
+
     async getChatsById(req, res){
         const {id} = req.params
         try{

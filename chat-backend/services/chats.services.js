@@ -19,6 +19,14 @@ class ChatsService {
         }
     }
 
+    async getChatsByUserId(userId){
+        try{
+            return await ChatsSchema.find({participants: userId}).populate("participants", "-password")
+        }catch(err){
+            console.log(err)
+        }
+    }
+
     async getChatsById(id){
         try{
             return await ChatsSchema.findById(id).populate("participants", "-password")

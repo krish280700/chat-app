@@ -1,0 +1,19 @@
+<div>
+    @for (chats of conversations(); track chats._id){
+        <div class="flex items-center justify-center h-16 -z-10  bg-white border-b-[1px] shadow-sm px-4" (click)="setCurrentChat(chats.participants, chats._id)">
+            <div class="flex items-center">
+                <ng-icon name="heroUserCircleSolid" size="2em"></ng-icon>
+            </div>
+            <div class="ml-4">
+                @for (item of chats.participants; track $index) {
+                    @if(item._id != user()?._id) {
+                        <p class="text-gray-700">{{ item.name }}</p>
+                    }
+                }
+            </div>
+            <div class="ml-auto">
+                
+            </div>
+        </div>
+    }
+</div>

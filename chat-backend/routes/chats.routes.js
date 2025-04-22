@@ -102,6 +102,7 @@ const ChatsController = require("../controllers/chats.controllers")
 
 router.post("/chats", ChatsController.createChat)
 router.get("/chats", ChatsController.getChats)
+router.get("/chats/user/:userId", ChatsController.getChatsByUserId)
 router.get("/chats/:id", ChatsController.getChatsById)
 router.put("/chats/:id", ChatsController.updateChat)
 router.delete("/chats/:id", ChatsController.deleteChat)
