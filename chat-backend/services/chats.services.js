@@ -1,4 +1,5 @@
 const ChatsSchema = require('../model/chats.models');
+const Message = require('../model/messages.model'); // Assuming you have a Message model
 
 class ChatsService {
     async createChat(participants){
@@ -19,11 +20,31 @@ class ChatsService {
         }
     }
 
-    async getChatsByUserId(userId){
-        try{
-            return await ChatsSchema.find({participants: userId}).populate("participants", "-password")
-        }catch(err){
-            console.log(err)
+    async getChatsByUserId(userId) {
+        try {
+          const chats = await ChatsSchema.find({ participants: userId })
+            .populate("participants", "-password")
+            .populate("lastMessage")
+            .sort({ updatedAt: -1 });
+      
+          const chatsWithUnread = await Promise.all(
+            chats.map(async (chat) => {
+              const unreadCount = await Message.countDocuments({
+                chatId: chat._id,
+                readBy: { $ne: userId } // Not read by this user
+              });
+      
+              return {
+                ...chat.toObject(),
+                unreadCount,
+              };
+            })
+          );
+      
+          return chatsWithUnread;
+        } catch (err) {
+          console.error("Error in getChatsByUserId:", err);
+          throw err;
         }
     }
 

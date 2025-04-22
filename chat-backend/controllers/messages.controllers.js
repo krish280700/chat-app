@@ -42,6 +42,17 @@ class MessagesController {
             res.status(500).json(err)
         }
     }
+
+    async updateAllMessagesReadStatusInChat(req, res){
+        const {chatId, userId} = req.params
+        console.log(chatId, userId)
+        try{
+            await MessagesService.updateAllMessagesReadStatusInChat(chatId, userId)
+            res.status(200).json({message: "All Messages Read Status Updated"})
+        }catch(err){
+            res.status(500).json(err)
+        }
+    }
     
     async deleteMessage(req, res){
         const {id} = req.params

@@ -4,6 +4,7 @@ import { MessagesService } from './messages.service';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowRightCircleSolid } from '@ng-icons/heroicons/solid';
 import { AuthService } from '../../../services/auth.service';
+import { FormsModule, NgForm } from '@angular/forms';
 
 type User = {
 	_id: string;	
@@ -12,18 +13,19 @@ type User = {
   }
   
   type messages = {
-	_id: string;
+	_id?: string;
 	sender: User;
 	receiver: User;
 	content: string;
-	isRead: boolean;
-	timestamp: string;
+	chatId: string;
+	isRead?: boolean;
+	timestamp?: string;
   }
 
 @Component({
 	selector: 'app-messages',
 	standalone: true,
-	imports: [NgIcon, CommonModule],
+	imports: [NgIcon, CommonModule, FormsModule],
 	templateUrl: './messages.component.html',
 	styleUrl: './messages.component.scss',
 	providers: [provideIcons({ heroArrowRightCircleSolid })]
@@ -33,7 +35,7 @@ export class MessagesComponent {
 	isFetching = signal<Boolean>(true);
 	user = signal<User | undefined>(undefined)
 	
-    currentChatPerson = input<string | undefined>('') 
+    currentChatPerson = input<User | undefined>(undefined) 
 	currentChatId = input<string | undefined>('')
 
 	private destroyRef = inject(DestroyRef);
@@ -83,9 +85,32 @@ export class MessagesComponent {
 		const viewportHeight = window.innerHeight;
 	
 		// Calculate the available height for the chat messages
-		const availableHeight = viewportHeight - totalUsedHeight;
+		const availableHeight = viewportHeight - totalUsedHeight - 100;
 	
 		// Set the height of the chat-message container
 		this.chatMessage.nativeElement.style.height = `${availableHeight}px`;
-	  }
+    }
+
+	handleSendMessage(form: NgForm){
+		const {messageContent} = form.value
+		const sender = this.user()?._id
+		const receiver = this.currentChatPerson()?._id
+		const chatId = this.currentChatId()
+		if(messageContent && sender && receiver && chatId) {
+			const message = {sender, receiver,chatId, content: messageContent}
+
+			this.messagesService.sendMessage(message).subscribe({
+				next: (response) => {
+					console.log('Message sent:', response);
+					this.messages.set([...this.messages(), response]); // Update the messages array with the new message
+					form.resetForm();
+				},
+				error: (error) => {
+					console.error('Error sending message:', error);
+				}
+			});
+	
+		
+		}
+	}
 }

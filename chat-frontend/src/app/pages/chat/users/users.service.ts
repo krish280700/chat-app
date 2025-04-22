@@ -16,12 +16,16 @@ export class UsersService {
   private httpClient = inject(HttpClient);
   private users = signal([])
 
-  loadUsers() {
-    return this.fetchUsers('http://localhost:4000')
+  loadUsers(id: string | undefined) {
+    return this.fetchUsers('http://localhost:4000', id)
   }
 
-  private fetchUsers(url: string) {
-    return this.httpClient.get<{ users: User[]}>(`${url}/api/users`).pipe(
+  createChat(userId: string | undefined, participantId: string | undefined) {
+    return this.addUsertoChat(userId, participantId)	
+  }
+
+  private fetchUsers(url: string, id: string | undefined) {
+    return this.httpClient.get<{ users: User[]}>(`${url}/api/users/${id}`).pipe(
       map((resData) => resData.users),
       catchError((error) => {
         console.error('Error fetching users:', error);
@@ -30,6 +34,17 @@ export class UsersService {
     )
   }
 
-  
+  private addUsertoChat(userId: string | undefined, participantId: string | undefined) {
+    if (userId && participantId) {
+      return this.httpClient.post<{ message: string}>('http://localhost:4000/api/chats', { participants: [userId, participantId] }).pipe(
+        map((resData) => resData.message),
+        catchError((error) => {
+          console.error('Error adding user to chat:', error);
+          return throwError(() => new Error("Failed to add user to chat")); // Return an empty array on error
+        })		
+      )
+    }
+    return throwError(() => new Error("ID is required to add user to chat"));
+  }
   
 }

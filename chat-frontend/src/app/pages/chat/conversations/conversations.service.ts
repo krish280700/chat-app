@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
 
 type User = {
   _id: string;	
@@ -20,17 +20,22 @@ type Conversation = {
 export class ConversationsService {
 
   private httpClient = inject(HttpClient);
-  private users = signal([])
+  private conversationsSubject = new BehaviorSubject<Conversation[]>([]); // Initialize conversations as an empty array
+  conversations$ = this.conversationsSubject.asObservable(); // Expose the observable for external use
 
   loadConversations(userId: string | undefined) {
     if (userId) {
-      return this.fetchConversations('http://localhost:4000', userId);
+      return this.fetchConversations('http://localhost:4000', userId).subscribe({
+        next: (convos) => this.conversationsSubject.next(convos),
+        error: (err) => console.error('Failed to load conversations:', err)
+      })
     }
 
     return throwError(() => new Error("ID is required to load conversations"));
   }
 
   private fetchConversations(url: string, userId: string | undefined) {
+    console.log("Fetching conversations for userId:", userId);
     return this.httpClient.get<{ chats: Conversation[]}>(`${url}/api/chats/user/${userId}`).pipe(
       map((resData) => {
         return resData.chats

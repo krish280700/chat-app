@@ -4,7 +4,7 @@
             <app-conversations (selectedConversation)="selectedConversation($event)"></app-conversations>
         </div>
         <div  class=" col-span-3 h-full relative shadow-xl">
-            <app-messages [currentChatId]="currentChatId()" [currentChatPerson]="currentChat()?.name"></app-messages>
+            <app-messages [currentChatId]="currentChatId()" [currentChatPerson]="currentChat()"></app-messages>
         </div>
         <div class="bg-gray-200 h-full shadow-xl">
             <app-users></app-users>

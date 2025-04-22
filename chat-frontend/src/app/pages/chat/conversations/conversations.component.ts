@@ -3,6 +3,7 @@ import { ConversationsService } from './conversations.service';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroUserCircleSolid } from '@ng-icons/heroicons/solid';
 import { AuthService } from '../../../services/auth.service';
+import { MessagesService } from '../messages/messages.service';
 
 type User = {
 	_id: string;	
@@ -24,32 +25,36 @@ export class ConversationsComponent {
 	conversations = signal<any[]>([]);
 	selectedConversation = output<{user: User, conversationId: string }>();
 
+	selectedCurrentChat = signal<User | undefined>(undefined)
+
 	user = signal<User | undefined>(undefined)
 
 	private conversationsService = inject(ConversationsService);
 	private destroyRef = inject(DestroyRef);
 	private authService = inject(AuthService)
+	private messagesService = inject(MessagesService)
+
 
 	ngOnInit() {
 		this.user.set(this.authService.user())
         const userId = this.user()?._id;	
 
 		if(userId) {
-			const subscription = this.conversationsService.loadConversations(userId).subscribe({
-				next: (conversations) => {
-					this.conversations.set(conversations);
-					this.setCurrentChat(conversations[0].participants, conversations[0]._id);
-				},
-				error: (error) => {
-					console.error('Error fetching conversations:', error);
-				},
-				complete: () => {
-					this.isFetching.set(false);
+			this.conversationsService.loadConversations(userId);
+
+			const sub = this.conversationsService.conversations$.subscribe({
+				next: (convos) => {
+				  this.conversations.set(convos);
+				  if (convos.length) {
+					this.setCurrentChat(convos[0].participants, convos[0]._id);
+				  }
+				  this.isFetching.set(false);
 				}
-				
-			})
+			});
+
+
 			this.destroyRef.onDestroy(() => {
-				subscription.unsubscribe();
+				sub.unsubscribe();
 			});
 		}
 
@@ -58,7 +63,13 @@ export class ConversationsComponent {
 	setCurrentChat(users: User[], conversationId: string) {
 		const user = users.find((user) => user._id !== this.user()?._id);
 		if (user) {
+			this.selectedCurrentChat.set(user);
 			this.selectedConversation.emit({user, conversationId});
+			this.messagesService.markAsRead(conversationId, user._id).subscribe({
+				next: (response) => {
+					console.log('Messages marked as read:', response);
+				}
+			});
 		} else {
 			console.error('No valid user found to emit.');
 		}

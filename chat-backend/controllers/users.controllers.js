@@ -20,15 +20,12 @@ class UsersController {
         }
     }
 
-    async getUsersById(req, res){
-        const {id} = req.params
-        try{
-            const user = await usersService.getUsersById(id)
-            if(user){
-                res.status(200).json({message: "User Found", user})
-            }else{
-                res.status(404).json({message: "User Not Found"})
-            }
+    async getUsersByExistingConversation(req, res) {
+        const userId = req.params.id;
+        console.log(userId, 'users')
+        try {
+            const users = await usersService.getUsersByExistingConversation(userId);
+            res.status(200).json({message: 'All Users', users})
         }catch(err){
             res.status(500).json(err)
         }

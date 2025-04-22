@@ -1,9 +1,12 @@
 const MessagesSchema = require("../model/messages.model")
+const ChatsSchema = require("../model/chats.models")
 
 class MessagesService {
     async createMessage(sender, receiver, content, chatId){
         try{
             const newMessage = await MessagesSchema.create({sender, receiver, content, chatId})
+            await ChatsSchema.findByIdAndUpdate(chatId, {lastMessage: newMessage._id})
+    
             await newMessage.populate("sender", "-password")
             return await newMessage.populate("receiver", "-password")
         }catch (err){
@@ -37,6 +40,18 @@ class MessagesService {
         }
     }
 
+    async updateAllMessagesReadStatusInChat(chatId, userId){
+        try{
+            const update =  await MessagesSchema.updateMany(
+                { chatId, receiver: userId, isRead: false },
+                { $set: { isRead: true } }
+            )
+
+            return update
+        }catch(err){
+            console.log(err)
+        }
+    }
 
     async deleteMessage(id){
         try{

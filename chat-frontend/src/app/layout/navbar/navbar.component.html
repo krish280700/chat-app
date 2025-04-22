@@ -4,6 +4,9 @@
             <a routerLink="" class="-m-1.5 font-bold p-1.5">Chat</a>
         </div>
         <div class="flex lg:flex-12">   
+            <p class="-m-1.5 p-1.5 cursor-pointer">{{user()?.name}}</p>
+        </div>
+        <div class="flex lg:flex-12">   
             <p (click)="logOut()" class="-m-1.5 p-1.5 cursor-pointer">Logout</p>
         </div>
     </nav>
