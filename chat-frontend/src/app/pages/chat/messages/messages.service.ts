@@ -1,6 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, throwError } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 type User = {
   _id: string;	
@@ -34,7 +35,7 @@ export class MessagesService {
 
   loadMessages(id: string | undefined) {
     if (id) {
-      return this.fetchMessages('http://localhost:4000', id);
+      return this.fetchMessages(id);
 
     }
     return throwError(() => new Error("ID is required to load messages"));
@@ -56,9 +57,9 @@ export class MessagesService {
     return throwError(() => new Error("Chat ID and User ID are required to mark as read"));
   }
 
-  private fetchMessages(url: string, id: string | undefined) {
+  private fetchMessages( id: string | undefined) {
 
-    return this.httpClient.get<{ messages: messages[]}>(`${url}/api/messages/chat/${id}`).pipe(
+    return this.httpClient.get<{ messages: messages[]}>(`${environment.apiUrl}/messages/chat/${id}`).pipe(
       map((resData) => {
         return resData.messages
       }),
@@ -70,7 +71,7 @@ export class MessagesService {
   }
   
   private sendNewMessage(messageData: MessageReq) {
-    return this.httpClient.post<{message: messages}>('http://localhost:4000/api/messages', messageData).pipe(
+    return this.httpClient.post<{message: messages}>(`${environment.apiUrl}/messages`, messageData).pipe(
       map((resData) => {
         console.log('Message sent successfully:', resData);
         return resData.message
@@ -83,7 +84,7 @@ export class MessagesService {
   }
   
   private updateMessageMarkAsRead(chatId: string, userId: string ) {
-    return this.httpClient.put(`http://localhost:4000/api/messages/chat/${chatId}/user/${userId}`, '').pipe(
+    return this.httpClient.put(`${environment.apiUrl}/messages/chat/${chatId}/user/${userId}`, '').pipe(
       map((resData) => {
         console.log('Message sent successfully:', resData);
         return 'Successfully marked as read'

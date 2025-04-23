@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, throwError } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 type User = {
   _id: number;	
@@ -17,15 +18,15 @@ export class UsersService {
   private users = signal([])
 
   loadUsers(id: string | undefined) {
-    return this.fetchUsers('http://localhost:4000', id)
+    return this.fetchUsers(id)
   }
 
   createChat(userId: string | undefined, participantId: string | undefined) {
     return this.addUsertoChat(userId, participantId)	
   }
 
-  private fetchUsers(url: string, id: string | undefined) {
-    return this.httpClient.get<{ users: User[]}>(`${url}/api/users/${id}`).pipe(
+  private fetchUsers(id: string | undefined) {
+    return this.httpClient.get<{ users: User[]}>(`${environment.apiUrl}/users/${id}`).pipe(
       map((resData) => resData.users),
       catchError((error) => {
         console.error('Error fetching users:', error);
@@ -36,7 +37,7 @@ export class UsersService {
 
   private addUsertoChat(userId: string | undefined, participantId: string | undefined) {
     if (userId && participantId) {
-      return this.httpClient.post<{ message: string}>('http://localhost:4000/api/chats', { participants: [userId, participantId] }).pipe(
+      return this.httpClient.post<{ message: string}>(`${environment.apiUrl}/chats`, { participants: [userId, participantId] }).pipe(
         map((resData) => resData.message),
         catchError((error) => {
           console.error('Error adding user to chat:', error);

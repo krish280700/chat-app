@@ -6,6 +6,7 @@ const cors = require("cors");
 const connectDB = require("./config/db")
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
+const {Server} = require('socket.io')
 
 require("dotenv").config();
 
@@ -34,7 +35,11 @@ const swaggerUiSetup = swaggerUi.setup(swaggerDocs, swaggerUiOptions);
 const swaggerUiRoute = swaggerUi.serve;
 const swaggerUiPath = "/api-docs";
 
-
+const io = new Server({
+  cors: {
+    origin: "*",
+  },
+});
 
 
 const app = express();
@@ -65,6 +70,33 @@ connectDB()
 // Start Server
 // const PORT = process.env.PORT || 5000;
 // app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Socket.io setup
+
+const onlineUsers = new Map();
+
+io.on('connection', (socket) => {
+  console.log('New client connected', socket.id);
+
+  // socket.on('register', (userId) => {
+  //   onlineUsers.set(userId, socket.id);
+  //   socket.emit('getUsers', Array.from(onlineUsers.keys()));
+  // });
+
+  socket.on('sendMessage', ({ senderId, receiverId, text }) => {
+    const receiverSocketId = onlineUsers.get(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('getMessage', {
+        senderId,
+        text,
+      });
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+})
 
 const server = new ApolloServer({ typeDefs, resolvers });
 

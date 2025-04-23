@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 type User = {
   _id: string;	
@@ -25,7 +26,7 @@ export class ConversationsService {
 
   loadConversations(userId: string | undefined) {
     if (userId) {
-      return this.fetchConversations('http://localhost:4000', userId).subscribe({
+      return this.fetchConversations(environment.apiUrl, userId).subscribe({
         next: (convos) => this.conversationsSubject.next(convos),
         error: (err) => console.error('Failed to load conversations:', err)
       })
@@ -36,7 +37,7 @@ export class ConversationsService {
 
   private fetchConversations(url: string, userId: string | undefined) {
     console.log("Fetching conversations for userId:", userId);
-    return this.httpClient.get<{ chats: Conversation[]}>(`${url}/api/chats/user/${userId}`).pipe(
+    return this.httpClient.get<{ chats: Conversation[]}>(`${url}/chats/user/${userId}`).pipe(
       map((resData) => {
         return resData.chats
       }),

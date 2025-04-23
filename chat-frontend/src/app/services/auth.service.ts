@@ -1,6 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 type User = {
   _id: string;
@@ -26,7 +27,7 @@ export class AuthService {
 	user = signal<User | undefined>(undefined); // Initialize user as an empty object
 
 	login(email: string, password: string) {
-		return this.httpClient.post<LoginResponse>('http://localhost:4000/api/login', { email, password }).pipe(
+		return this.httpClient.post<LoginResponse>(`${environment.apiUrl}/login`, { email, password }).pipe(
 			map((resData) => {
 				this.token = resData.token; // Store the token when logging in
 				this.user.set(resData.user); // Store the user data when logging in
@@ -45,7 +46,7 @@ export class AuthService {
 	}
 
 	signup(name: string, email: string, password: string) {
-		return this.httpClient.post<LoginResponse>('http://localhost:4000/api/register', { name, email, password }).pipe(
+		return this.httpClient.post<LoginResponse>(`${environment.apiUrl}/register`, { name, email, password }).pipe(
 			map((resData) => {
 				this.token = resData.token; // Store the token when signing up
 				this.user.set(resData.user); // Store the user data when signing up
@@ -74,15 +75,26 @@ export class AuthService {
 	}
 
 	isAuthenticated(): boolean {
-		const storedToken = localStorage.getItem('token'); // Retrieve the token from local storage
-		const storedIsLoggedIn = localStorage.getItem('isLoggedIn'); // Retrieve the login status from local storage
-		const storedUser = localStorage.getItem('user'); // Retrieve the user data from local storage
-		this.user.set(storedUser ? JSON.parse(storedUser) : undefined); // Set the user data from local storage
-		return (this.isLoggedIn && this.token !== null) || (storedIsLoggedIn == 'true' && storedToken !== null); // Check if the user is logged in and token is not null
+		if (this.isBrowser()) {
+			this.token = localStorage.getItem('token'); // Retrieve the token from local storage
+			this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; // Retrieve the login status from local storage
+		
+			const storedToken = localStorage.getItem('token'); // Retrieve the token from local storage
+			const storedIsLoggedIn = localStorage.getItem('isLoggedIn'); // Retrieve the login status from local storage
+			const storedUser = localStorage.getItem('user'); // Retrieve the user data from local storage
+			this.user.set(storedUser ? JSON.parse(storedUser) : undefined); // Set the user data from local storage
+			return (this.isLoggedIn && this.token !== null) || (storedIsLoggedIn == 'true' && storedToken !== null); // Check if the user is logged in and token is not null
+		}
+		return false; // If not in browser, return false
 	}
 
 	getToken(): string | null {
 		return this.token; // Return the stored token
 	}
+
+	isBrowser(): boolean {
+		return typeof window !== 'undefined';
+	}
+	  
 
 }
