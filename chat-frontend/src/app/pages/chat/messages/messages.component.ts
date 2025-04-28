@@ -5,6 +5,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowRightCircleSolid } from '@ng-icons/heroicons/solid';
 import { AuthService } from '../../../services/auth.service';
 import { FormsModule, NgForm } from '@angular/forms';
+import { SocketService } from '../../../services/socket/socket.service';
 
 type User = {
 	_id: string;	
@@ -41,6 +42,7 @@ export class MessagesComponent {
 	private destroyRef = inject(DestroyRef);
 	private messagesService = inject(MessagesService);
 	private authService = inject(AuthService)
+	private socketService = inject(SocketService)
 
 	@ViewChild('chatHeader') header!: ElementRef;
 	@ViewChild('chatMessage') chatMessage!: ElementRef;
@@ -48,6 +50,13 @@ export class MessagesComponent {
 	
 	ngOnInit(){
 		this.user.set(this.authService.user())
+
+		const userId = this.authService.user()?._id;
+	  
+		// Set up listener ONCE
+		this.socketService.onMessage((msg) => {
+		  this.messages.set([...this.messages(), msg]); // Update signal or state here
+		});
 	}
 
 	ngOnChanges() {
@@ -99,18 +108,14 @@ export class MessagesComponent {
 		if(messageContent && sender && receiver && chatId) {
 			const message = {sender, receiver,chatId, content: messageContent}
 
-			this.messagesService.sendMessage(message).subscribe({
-				next: (response) => {
-					console.log('Message sent:', response);
-					this.messages.set([...this.messages(), response]); // Update the messages array with the new message
-					form.resetForm();
-				},
-				error: (error) => {
-					console.error('Error sending message:', error);
+			this.socketService.sendMessage(message, (ack) => {
+				if (ack.success) {
+				  this.messages.set([...this.messages(), ack.message]);
+				  form.resetForm();
+				} else {
+				  console.error("Message failed to send:", ack.error);
 				}
 			});
-	
-		
 		}
 	}
 }

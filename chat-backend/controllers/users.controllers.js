@@ -22,7 +22,6 @@ class UsersController {
 
     async getUsersByExistingConversation(req, res) {
         const userId = req.params.id;
-        console.log(userId, 'users')
         try {
             const users = await usersService.getUsersByExistingConversation(userId);
             res.status(200).json({message: 'All Users', users})
