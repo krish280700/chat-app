@@ -1,13 +1,25 @@
 const MessagesSchema = require("../model/messages.model")
 const ChatsSchema = require("../model/chats.models")
+const {Resend} = require("resend")
+
+
 
 class MessagesService {
     async createMessage(sender, receiver, content, chatId){
+        const resendInstance = new Resend(process.env.RESEND_API_KEY)
         try{
             const newMessage = await MessagesSchema.create({sender, receiver, content, chatId})
             await ChatsSchema.findByIdAndUpdate(chatId, {lastMessage: newMessage._id})
     
             await newMessage.populate("sender", "-password")
+        
+            resendInstance.emails.send({
+                from: 'onboarding@resend.dev',
+                to: 'krishkrishnan2001@gmail.com',
+                subject: 'You have a new message!',
+                html: '<p>You got a message</p>'
+            });
+
             return await newMessage.populate("receiver", "-password")
         }catch (err){
             console.log(err)
